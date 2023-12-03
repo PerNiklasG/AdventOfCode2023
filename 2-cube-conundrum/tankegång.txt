@@ -1,0 +1,5 @@
+Hitta alla set där n färg större än target
+returnera enbart de rader som är true
+summera game#
+
+använd pair <siffra, färg>?
