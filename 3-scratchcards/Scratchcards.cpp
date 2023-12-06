@@ -13,6 +13,10 @@ struct game_t{
 
 using games_t = std::vector<game_t>;
 
+int part1(const games_t &games);
+int part2(const games_t &games);
+int recursiveFunction(const games_t& games, int card_id, int number_of_wins);
+
 games_t load_input(const std::string& file) {
     games_t ret;
     std::ifstream input(file);
@@ -53,31 +57,22 @@ games_t load_input(const std::string& file) {
                     s = "";
                 }
             }   
-            else
-            {
-               // std::cout << "error, set[i] = " << set[i] << std::endl;
-            }
         }
         int round = 0;
         for (auto& i : game.numbers)
         {
-            //std::cout << "i: " << i << std::endl;
             for (auto& j : game.winning)
             {
                 if (i == j)
                 {
-                    //std::cout << "i: " << i << " j: " << j << std::endl;
                     round++;
                 }
             }
 
         }
         game.winning_numbers = round;
-        res += round;
-
         ret.push_back(game);
     }
-    std::cout << "res: " <<  res << std::endl;
     return ret;
 }
 
@@ -102,11 +97,35 @@ int part1(const games_t& games)
     return sum;
 }
 
+int part2(const games_t& games)
+{   
+    static int res = 0;
+    for(int i = 0; i < games.size(); i++)
+    {
+        res = recursiveFunction(games, games[i].id, games[i].winning_numbers);
+    }
+    return res;
+}
+
+int recursiveFunction(const games_t& games, int card_id, int number_of_wins)
+{
+    static int res = 0;
+    res++;
+    for(int i = card_id; i < card_id+number_of_wins; i++)
+    {
+        recursiveFunction(games, games[i].id, games[i].winning_numbers);
+        
+    }
+    return res;
+}
+
 int main()
 {
-    auto test_values = load_input("scratchcards_input.txt");
+    auto test_values = load_input("sample.txt");
+    auto actual_values = load_input("scratchcards_input.txt");
 
-    std::cout << "part1: " << part1(test_values) << std::endl;
+    std::cout << "part1: " << part1(actual_values) << std::endl;
+    std::cout << "part2: " << part2(actual_values) << std::endl;
 
     return 0;
 }
