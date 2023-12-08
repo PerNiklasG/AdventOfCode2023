@@ -19,11 +19,17 @@ struct input
     int row;
     int column;
     bool is_symbol=false;
+    std::vector<gear_t> adjacent_gears;
+    int num_of_adjacent_gears;
 };
 
 using input_t = std::vector<input>;
 
-int part1(const input_t& input, const std::vector<gear_t>& numbers, int row_width);
+int part1(input_t& input, const std::vector<gear_t>& numbers, int row_width);
+
+int part2(const input& input);
+
+bool alreadyExists(const input &in, const gear_t &gear);
 
 int processInput(const std::string& file)
 {   
@@ -97,10 +103,19 @@ int processInput(const std::string& file)
     }
 
     sum = part1(ret, numbers, row_width);
+    int sum2 = 0;
+    for(auto& i : ret)
+    {
+        if(i.is_symbol && i.adjacent_gears.size() == 2)
+        {
+            sum2 += part2(i);
+        }
+    }
+    std::cout << "Sum2: " << sum2 << std::endl;
     return sum;
 }
 
-int part1(const input_t& input, const std::vector<gear_t>& numbers, int row_width)
+int part1(input_t& input, const std::vector<gear_t>& numbers, int row_width)
 {
     int sum = 0;
     
@@ -134,41 +149,73 @@ int part1(const input_t& input, const std::vector<gear_t>& numbers, int row_widt
             if (input[cords - row_width + 1].is_symbol == true)
             {
                 std::cout << "2Found symbol: " << input[cords - row_width + 1].row << " " << input[cords - row_width + 1].column << std::endl;
+                if(!alreadyExists(input[cords - row_width + 1], i))
+                {
+                    input[cords - row_width + 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords - row_width].is_symbol == true)
             {
                 std::cout << "2Found symbol: " << input[cords - row_width].row << " " << input[cords - row_width].column << std::endl;
+                if(!alreadyExists(input[cords - row_width], i))
+                {
+                    input[cords - row_width].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords - row_width - 1].is_symbol == true)
             {
                 std::cout << "3Found symbol: " << input[cords - row_width - 1].row << " " << input[cords - row_width - 1].column << std::endl;
+                if(!alreadyExists(input[cords - row_width - 1], i))
+                {
+                    input[cords - row_width - 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords - 1].is_symbol == true)
             {
                 std::cout << "4Found symbol: " << input[cords - 1].row << " " << input[cords - 1].column << std::endl;
+                if(!alreadyExists(input[cords - 1], i))
+                {
+                    input[cords - 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords + 1].is_symbol == true)
             {
                 std::cout << "5Found symbol: " << input[cords + 1].row << " " << input[cords + 1].column << std::endl;
+                if(!alreadyExists(input[cords + 1], i))
+                {
+                    input[cords + 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords + row_width - 1].is_symbol == true)
             {
                 std::cout << "6Found symbol: " << input[cords + row_width - 1].row << " " << input[cords + row_width - 1].column << std::endl;
+                if(!alreadyExists(input[cords + row_width - 1], i))
+                {
+                    input[cords + row_width - 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords + row_width].is_symbol == true)
             {
                 std::cout << "7Found symbol: " << input[cords + row_width].row << " " << input[cords + row_width].column << std::endl;
+                if(!alreadyExists(input[cords + row_width], i))
+                {
+                    input[cords + row_width].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
             else if (input[cords + row_width + 1].is_symbol == true)
             {
                 std::cout << "8Found symbol: " << input[cords + row_width + 1].row << " " << input[cords + row_width + 1].column << std::endl;
+                if(!alreadyExists(input[cords + row_width + 1], i))
+                {
+                    input[cords + row_width + 1].adjacent_gears.push_back(i);
+                }
                 is_valid = true;
             }
         }
@@ -180,6 +227,28 @@ int part1(const input_t& input, const std::vector<gear_t>& numbers, int row_widt
     return sum;
 }
 
+int part2(const input& in)
+{
+    int sum = 1;
+    for(auto& i : in.adjacent_gears)
+    {
+        sum *= i.value;
+    }
+    return sum;
+}
+
+bool alreadyExists(const input& in, const gear_t& gear)
+{
+    for(auto& i : in.adjacent_gears)
+    {
+        if(i.row == gear.row && i.column == gear.column && i.value == gear.value)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 int main()
 {
     //int test_values = processInput("sample.txt");
@@ -187,4 +256,6 @@ int main()
 
     //std::cout << "part1: " << test_values << std::endl;
     std::cout << "part1: " << actual_values << std::endl;
+
+    //std::cout << "part2: " << part2(input_t) << std::endl;
 }
